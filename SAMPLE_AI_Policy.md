@@ -1,0 +1,172 @@
+# Acme Technologies Pte Ltd - AI Usage Policy
+
+**Generated Date:** January 31, 2026
+
+**Industry:** Technology
+
+---
+
+## Table of Contents
+
+1. Purpose and Applicability
+2. Scope
+3. Approved AI Tools
+4. Prohibited AI Tools
+5. Guidelines and Guardrails
+   5a. Guidelines
+   5b. Data Guardrails
+6. AI-Generated Output Guardrails
+7. Transparency, explainability, and accountability
+8. Implementation and Monitoring
+   8a. AI Governance Board
+   8b. Designated AI Officer
+   8c. Periodic Reviews
+9. Compliance and legal
+10. Consequences of policy violation
+
+---
+
+## 1. Purpose and Applicability
+
+This AI Use Policy outlines principles and guardrails for responsible use of Artificial Intelligence tools at Acme Technologies Pte Ltd, particularly Generative AI.
+
+The purpose of this policy is to ensure ethical, transparent, and compliant use of AI technologies while mitigating associated risks.
+
+This policy applies to all employees, contractors, and third-party users with access to Acme Technologies Pte Ltd AI tools and systems.
+
+## 2. Scope
+
+This policy covers all AI tools used within Acme Technologies Pte Ltd, including but not limited to GenAI, machine learning, and predictive analytics.
+
+It encompasses the collection, processing, and utilization of data through AI systems.
+
+## 3. Approved AI Tools
+
+Employees may use AI tools that have been approved by the IT department and meet Acme Technologies Pte Ltd security standards.
+
+Examples of allowed AI tools: customer support chatbots, data analysis algorithms, and predictive analytics tools.
+
+Use of approved tools requires that they are only accessed through a company-provided account (personal accounts prohibited).
+
+## 4. Prohibited AI Tools
+
+Use of any AI tools that infringe upon privacy laws or violate ethical guidelines is strictly prohibited.
+
+Examples of prohibited AI tools: facial recognition systems without explicit consent, biased AI models, or unauthorized data scraping tools.
+
+## 5. Guidelines and Guardrails
+
+## 5a. Guidelines
+
+AI-generated content should be reviewed by a human to ensure it's appropriate for its intended purpose.
+
+Understand that GenAI tools may be useful but are not a substitute for human judgment and creativity.
+
+Understand that many GenAI tools are prone to "hallucinations," false answers or information, or information that is subtly wrong.
+
+Treat every bit of information you provide to a GenAI tool as if it will go viral on the Internet, attributed to you or Acme Technologies Pte Ltd, regardless of the settings you have selected within the tool (or the assurances made by its creators).
+
+Inform your supervisor when you have used a GenAI tool to help perform a task.
+
+Verify that any response from a GenAI tool that you intend to rely on or use is accurate, appropriate, not biased, not a violation of any other individual or entity's intellectual property or privacy, and consistent with Acme Technologies Pte Ltd policies and applicable laws.
+
+## 5b. Data Guardrails
+
+**Only input the data you need:** Only input data that is required for the purpose for which you are using the AI tool, and ensure the data you are using has been approved by your legal business partner for your use case.
+
+**Do not input Sensitive Personal Data:** This includes information such as social security numbers, financial information like credit card or bank account numbers, personal addresses, or personal health information.
+
+**Do not input any Restricted Data:** This may include things like material nonpublic information, SOX-controlled data, Acme Technologies Pte Ltd trade secrets, or internal security controls.
+
+**Do not input access credentials:** Do not input system access credentials (for our systems or those of any third party)
+
+**Additional restrictions:** 
+
+**Do not use GenAI tools to make or help you make employment decisions:** Do not use GenAI tools to make or help you make employment decisions about applicants or employees, including recruitment, hiring, retention, promotions, transfers, performance monitoring, discipline, demotion, or terminations.
+
+**Do not upload or input any confidential, proprietary, or sensitive Acme Technologies Pte Ltd information:** Do not upload or input any confidential, proprietary, or sensitive Acme Technologies Pte Ltd information into any GenAI tool. Examples include passwords and other credentials, protected health information, personnel material, information from documents marked Confidential, Sensitive, or Proprietary, or any other nonpublic Acme Technologies Pte Ltd information that might be of use to competitors or harmful to Acme Technologies Pte Ltd if disclosed. This may breach your or Acme Technologies Pte Ltd's obligations to keep certain information confidential and secure, risks widespread disclosure, and may cause Acme Technologies Pte Ltd's rights to that information to be challenged.
+
+**Do not represent work generated by a GenAI tool as being your own original work:** 
+
+**Do not integrate any GenAI tool with internal Acme Technologies Pte Ltd software:** Do not integrate any GenAI tool with internal Acme Technologies Pte Ltd software without first receiving specific written permission from your supervisor and the IT Department.
+
+**Do not use GenAI tools other than those on the approved list:** Do not use GenAI tools other than those on the approved list from the IT Department. Malicious chatbots can be designed to steal or convince you to divulge information.
+
+**PDPA Compliance - Personal Data Collection:** Ensure that any personal data collected through AI tools complies with the Personal Data Protection Act 2012 (PDPA). Organizations must notify individuals about the purposes of collection, use, or disclosure of their personal data.
+
+**PDPA Compliance - Consent Requirement:** Obtain consent from individuals before collecting, using, or disclosing their personal data, unless an exception under the PDPA applies.
+
+**PDPA Compliance - Data Accuracy:** Make reasonable efforts to ensure that personal data collected is accurate and complete, especially if it will be used to make decisions affecting individuals or disclosed to other organizations.
+
+## 6. AI-Generated Output Guardrails
+
+### AI Only Responses
+
+If an AI feature will directly present a response to customers or third parties without human review or intervention, you must disclose to the customer that they are:
+
+- Engaging solely with an AI.
+- Responsible for checking it for accuracy.
+- Responsible for checking the response for detectable bias.
+
+**Example:** "This response has been generated by an AI tool and has not been reviewed by a human being, you are responsible for checking for accuracy and bias."
+
+### Generating Images/Voice/Video
+
+If you're using AI to generate content, please follow these guidelines.
+
+- Check output for any indication of third-party ownership, such as trademarks or watermarks, and don't use any output that contains such content.
+- If you are using an AI tool to replicate someone's image, likeness, or voice - you need to get their express written permission first. Please reach out to legal counsel to coordinate permission.
+
+### Generating Code
+
+If an AI feature will generate code, this requires additional review.
+
+## 7. Transparency, explainability, and accountability
+
+Employees must be transparent about the use of AI in their work, ensuring that stakeholders are aware of the technology's involvement in decision-making processes.
+
+Employees must utilize Acme Technologies Pte Ltd's centralized system for AI governance and compliance efforts to ensure transparency of proposed and active AI activities.
+
+Employees are responsible for the outcomes generated by AI systems and should be prepared to explain and justify those outcomes.
+
+Employees should report any concerns or potential violations of this AI policy to the designated authority within Acme Technologies Pte Ltd. [Link to an external reporting resouce or insert a designated reporting email.]
+
+Acme Technologies Pte Ltd will investigate and address reported issues promptly.
+
+AI systems and models should provide clear explanations of their decision-making processes, especially when impacting individuals.
+
+Ensure that AI tools are understandable to non-technical stakeholders and that their implications are communicated transparently.
+
+Acme Technologies Pte Ltd aligns with the Singapore Model AI Governance Framework, specifically the supplementary guidance for Agentic AI systems (January 2026), which addresses unique risks from autonomous agents including:
+
+• Agentic Loop Risks: Monitoring and controlling AI systems that can iteratively refine their own actions
+
+• Tool Use Accountability: Clear tracking of which AI agent invoked which external tool or API
+
+• Explainability for Multi-Step Decisions: Providing audit trails for complex, multi-turn agent reasoning
+
+## 8. Implementation and Monitoring
+
+### 8a. AI Governance Board
+
+A multidisciplinary AI risk management team ('AI Governance Board') comprised of a diverse team of experts, including data scientists, legal and compliance professionals, and ethics specialists, will ensure that AI initiatives are developed and deployed responsibly, in compliance with relevant laws and regulations, and with ethical considerations in mind. The AI Governance Board will create and define roles and responsibilities for designated committees critical to the oversight of Acme Technologies Pte Ltd's AI initiatives.
+
+### 8b. Designated AI Officer
+
+A designated AI Officer will be responsible for overseeing the implementation of this policy, providing guidance and support to employees, and ensuring compliance with relevant laws and regulations.
+
+### 8c. Periodic Reviews
+
+The AI Officer will conduct periodic reviews of AI system use within the company to ensure adherence to this policy, identify any emerging risks, and recommend updates to the policy as necessary.
+
+## 9. Compliance and legal
+
+Legal and Security will monitor and investigate suspected and/or reported violations of this policy. Depending on the results of any investigations, violations may be escalated to Leadership to determine the appropriate action.
+
+All AI tools and processes must comply with applicable laws, regulations, and industry standards.
+
+Periodic audits of AI systems may be conducted to ensure ongoing compliance.
+
+## 10. Consequences of policy violation
+
+Violating this policy may result in disciplinary action, up to and including immediate termination, and could result in legal action. If you are concerned that someone has violated this policy, report this behavior to your supervisor or any member of Human Resources.

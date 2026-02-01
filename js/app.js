@@ -2,20 +2,26 @@ import { createApp, ref, computed } from 'vue'
 import NavBar from './components/NavBar.js'
 import ModuleCard from './components/ModuleCard.js'
 import WizardStep from './components/WizardStep.js'
+import PolicyWizardStep from './components/PolicyWizardStep.js'
 import ComplianceReport from './components/ComplianceReport.js'
 import ResourcesView from './components/ResourcesView.js'
+import PolicyGenerator from './components/PolicyGenerator.js'
 import { agenticFramework } from './data/rules_agentic.js'
+import { generatePolicy, policyToMarkdown, validatePolicy } from './utils/policyEngine.js'
+import { exportToDOCX, exportToPDF } from './utils/documentExport.js'
 
 createApp({
     components: {
         NavBar,
         ModuleCard,
         WizardStep,
+        PolicyWizardStep,
         ComplianceReport,
-        ResourcesView
+        ResourcesView,
+        PolicyGenerator
     },
     setup() {
-        // App State: 'landing' | 'dashboard' | 'wizard' | 'report' | 'resources'
+        // App State: 'landing' | 'dashboard' | 'wizard' | 'report' | 'resources' | 'policy-generator' | 'policy-preview'
         const viewState = ref('landing')
         const previousViewState = ref('landing')
 
@@ -25,6 +31,19 @@ createApp({
 
         // Data Store
         const answers = ref([]) // Array of { pillarId, ruleId, compliant, rule }
+        const generatedPolicy = ref(null) // Generated policy document
+        const policyValidation = ref(null) // Validation results
+        const subscriptionEmail = ref('') // Email subscription
+
+        // --- FUNCTIONS ---
+
+        const handleEmailSubscription = () => {
+            if (subscriptionEmail.value) {
+                // TODO: Implement actual email collection (send to backend/API)
+                alert(`✅ Thank you for subscribing!\n\nEmail: ${subscriptionEmail.value}\n\n(In production, this would be sent to your backend/mailing list service)`)
+                subscriptionEmail.value = ''
+            }
+        }
 
         // --- COMPUTED ---
 
@@ -119,6 +138,76 @@ createApp({
             if (viewState.value === 'landing') viewState.value = 'dashboard'; // Better UX usually to go to dashboard
         }
 
+        const showAssessment = () => {
+            if (viewState.value !== 'dashboard') {
+                previousViewState.value = viewState.value;
+            }
+            viewState.value = 'dashboard';
+        }
+
+        const showPolicyGenerator = () => {
+            if (viewState.value !== 'policy-generator') {
+                previousViewState.value = viewState.value;
+            }
+            viewState.value = 'policy-generator';
+        }
+
+        const handlePolicyGeneration = (config) => {
+            try {
+                const policy = generatePolicy(config);
+                const validation = validatePolicy(policy);
+
+                generatedPolicy.value = {
+                    policy,
+                    markdown: policyToMarkdown(policy),
+                    validation,
+                    config
+                };
+
+                viewState.value = 'policy-preview';
+            } catch (error) {
+                console.error('Policy generation error:', error);
+                alert('生成政策时出错，请重试。');
+            }
+        }
+
+        const backFromPolicyGenerator = () => {
+            viewState.value = previousViewState.value === 'policy-generator' ? 'dashboard' : previousViewState.value;
+            if (viewState.value === 'landing') viewState.value = 'dashboard';
+        }
+
+        const downloadPolicyAsMarkdown = () => {
+            if (!generatedPolicy.value) return;
+
+            const blob = new Blob([generatedPolicy.value.markdown], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'AI POLICY.md';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        const downloadPolicyAsDOCX = async () => {
+            if (!generatedPolicy.value) return;
+            try {
+                await exportToDOCX(generatedPolicy.value.policy);
+            } catch (error) {
+                console.error('DOCX export error:', error);
+                alert('导出DOCX时出错: ' + error.message);
+            }
+        }
+
+        const downloadPolicyAsPDF = () => {
+            if (!generatedPolicy.value) return;
+            try {
+                exportToPDF(generatedPolicy.value.policy);
+            } catch (error) {
+                console.error('PDF export error:', error);
+                alert('导出PDF时出错: ' + error.message);
+            }
+        }
+
         return {
             agenticFramework,
             viewState,
@@ -126,6 +215,10 @@ createApp({
             isWizardActive,
             answers,
             activePillarKey,
+            generatedPolicy,
+            policyValidation,
+            subscriptionEmail,
+            handleEmailSubscription,
             startApp,
             openModule,
             submitAnswer,
@@ -134,11 +227,18 @@ createApp({
             backToDashboard,
             isAssessmentComplete,
             showResources,
-            backFromResources
+            backFromResources,
+            showAssessment,
+            showPolicyGenerator,
+            handlePolicyGeneration,
+            backFromPolicyGenerator,
+            downloadPolicyAsMarkdown,
+            downloadPolicyAsDOCX,
+            downloadPolicyAsPDF
         }
     },
     template: `
-        <NavBar @nav-resources="showResources" />
+        <NavBar @nav-resources="showResources" @nav-policy="showPolicyGenerator" />
         
         <main class="flex-grow container mx-auto px-4 py-8 relative">
             
@@ -166,13 +266,13 @@ createApp({
                         <div class="grid md:grid-cols-2">
                              <div class="h-64 md:h-auto bg-cover bg-center" style="background-image: url('./assets/news_banner.png');"></div>
                              <div class="p-8 flex flex-col justify-center">
-                                <span class="text-xs font-bold text-primary uppercase tracking-widest mb-2">Global Breaking News</span>
-                                <h3 class="text-2xl font-bold text-white mb-3">Singapore Launches World's First Agentic AI Framework</h3>
+                                <span class="text-xs font-bold text-primary uppercase tracking-widest mb-2">Latest Governance News</span>
+                                <h3 class="text-2xl font-bold text-white mb-3">Singapore Launches Model AI Governance Framework for Generative AI</h3>
                                 <p class="text-gray-400 text-sm mb-4 leading-relaxed">
-                                    At Davos 2026, Singapore defined the global standard for governing autonomous agents. This framework addresses the unique risks of "Agentic Loops" and "Tool Use" that traditional LLM guidance missed.
+                                    The new framework expands on the existing Model AI Governance Framework to address 9 dimensions of AI governance, including Incident Reporting and Content Provenance.
                                 </p>
-                                <a href="https://www.imda.gov.sg" target="_blank" class="text-primary font-bold hover:text-white transition-colors flex items-center gap-1 text-sm">
-                                    Read Press Release →
+                                <a href="https://aiverifyfoundation.sg/resources/model-ai-governance-framework-genai" target="_blank" class="text-primary font-bold hover:text-white transition-colors flex items-center gap-1 text-sm">
+                                    Read Full Framework →
                                 </a>
                              </div>
                         </div>
@@ -188,8 +288,8 @@ createApp({
                         Get monthly "Red Team" reports and emerging threat analysis directly to your inbox.
                     </p>
                     
-                    <form onsubmit="event.preventDefault(); alert('Subscribed! (Demo Only)')" class="flex gap-2 relative z-10">
-                        <input type="email" placeholder="Enter your work email" required
+                    <form @submit.prevent="handleEmailSubscription" class="flex gap-2 relative z-10">
+                        <input v-model="subscriptionEmail" type="email" placeholder="Enter your work email" required
                             class="flex-grow px-4 py-3 bg-black/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-primary placeholder-gray-500 transition-colors">
                         <button type="submit" class="px-6 py-3 bg-white text-gray-900 font-bold rounded-lg hover:bg-gray-200 transition-colors">
                             Subscribe
@@ -264,6 +364,94 @@ createApp({
                 v-else-if="viewState === 'resources'"
                 @back="backFromResources"
             />
+
+            <!-- VIEW: Policy Generator -->
+            <PolicyGenerator
+                v-else-if="viewState === 'policy-generator'"
+                @back="backFromPolicyGenerator"
+                @generate="handlePolicyGeneration"
+            />
+
+            <!-- VIEW: Policy Preview -->
+            <div v-else-if="viewState === 'policy-preview' && generatedPolicy" class="max-w-6xl mx-auto mt-10 animate-fade-in pb-20">
+                <div class="text-center mb-8">
+                    <h2 class="text-4xl font-bold text-white mb-4">Generated AI Policy Document</h2>
+                    <p class="text-gray-400">
+                        {{ generatedPolicy.policy.metadata.companyName }} - {{ generatedPolicy.policy.metadata.industry }}
+                    </p>
+                </div>
+
+                <!-- Validation Results -->
+                <div v-if="generatedPolicy.validation" class="mb-8 glass-panel p-6 rounded-xl">
+                    <h3 class="text-xl font-bold text-white mb-4">质量检查</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="text-center">
+                            <div :class="generatedPolicy.validation.hasSection5a ? 'text-green-400' : 'text-red-400'" class="text-3xl mb-2">
+                                {{ generatedPolicy.validation.hasSection5a ? '✓' : '✗' }}
+                            </div>
+                            <p class="text-sm text-gray-400">第5a章</p>
+                        </div>
+                        <div class="text-center">
+                            <div :class="generatedPolicy.validation.hasSection5bWith9Items ? 'text-green-400' : 'text-red-400'" class="text-3xl mb-2">
+                                {{ generatedPolicy.validation.hasSection5bWith9Items ? '✓' : '✗' }}
+                            </div>
+                            <p class="text-sm text-gray-400">第5b章 (≥9条)</p>
+                        </div>
+                        <div class="text-center">
+                            <div :class="generatedPolicy.validation.meetsMinimumPages ? 'text-green-400' : 'text-yellow-400'" class="text-3xl mb-2">
+                                {{ generatedPolicy.validation.estimatedPages }}
+                            </div>
+                            <p class="text-sm text-gray-400">预估页数</p>
+                        </div>
+                        <div class="text-center">
+                            <div :class="generatedPolicy.validation.allMandatorySectionsPresent ? 'text-green-400' : 'text-red-400'" class="text-3xl mb-2">
+                                {{ generatedPolicy.validation.allMandatorySectionsPresent ? '✓' : '✗' }}
+                            </div>
+                            <p class="text-sm text-gray-400">所有必需章节</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview -->
+                <div class="glass-panel p-8 rounded-xl mb-8">
+                    <pre class="text-gray-300 text-sm whitespace-pre-wrap font-mono">{{ generatedPolicy.markdown }}</pre>
+                </div>
+
+                <!-- Actions -->
+                    <button 
+                        @click="viewState = 'policy-generator'"
+                        class="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors font-bold"
+                    >
+                        ← Back to Edit
+                    </button>
+                    <div class="flex gap-3">
+                        <button 
+                            @click="downloadPolicyAsDOCX"
+                            class="px-6 py-3 bg-primary hover:bg-indigo-500 text-white rounded-lg transition-colors font-bold flex items-center gap-2 shadow-lg"
+                        >
+                            <span>📄</span> Download DOCX
+                        </button>
+                        <button 
+                            @click="downloadPolicyAsPDF"
+                            class="px-6 py-3 bg-secondary hover:bg-pink-600 text-white rounded-lg transition-colors font-bold flex items-center gap-2 shadow-lg"
+                        >
+                            <span>📕</span> Download PDF
+                        </button>
+                        <button 
+                            @click="downloadPolicyAsMarkdown"
+                            class="px-6 py-3 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors font-bold flex items-center gap-2"
+                        >
+                            <span>📝</span> Markdown
+                        </button>
+                        <button 
+                            @click="backToDashboard"
+                            class="px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors font-bold ml-2"
+                        >
+                            Done ✓
+                        </button>
+                    </div>
+                </div>
+            </div>
 
         </main>
         

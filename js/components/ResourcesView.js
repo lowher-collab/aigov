@@ -16,13 +16,13 @@ export default {
                     <span>🏛️</span> Regulatory Frameworks
                 </h3>
                 
-                <a href="https://www.imda.gov.sg/-/media/imda/files/about/emerging-tech-and-research/artificial-intelligence/mgf-for-agentic-ai.pdf" target="_blank" 
+                <a href="https://aiverifyfoundation.sg/wp-content/uploads/2024/05/Model-AI-Governance-Framework-for-Generative-AI-May-2024-1-1.pdf" target="_blank" 
                     class="block glass-panel p-6 rounded-xl hover:border-primary/50 transition-all group">
                     <div class="flex justify-between items-start">
-                        <h4 class="font-bold text-white text-lg group-hover:text-primary transition-colors">Agentic AI Governance Framework</h4>
-                        <span class="text-xs bg-primary/20 text-primary px-2 py-1 rounded">NEW (Jan 2026)</span>
+                        <h4 class="font-bold text-white text-lg group-hover:text-primary transition-colors">Model AI Governance Framework for Generative AI</h4>
+                        <span class="text-xs bg-primary/20 text-primary px-2 py-1 rounded">NEW (May 2024)</span>
                     </div>
-                    <p class="text-gray-400 text-sm mt-2">The official guidance on managing risks for autonomous AI agents (The basis of this Workbench).</p>
+                    <p class="text-gray-400 text-sm mt-2">The official definitive guidance on managing risks for Generative AI, expanded from the 2019 framework.</p>
                 </a>
 
                 <a href="https://go.gov.sg/ai-gov-mf-2" target="_blank"
@@ -37,11 +37,7 @@ export default {
                     <p class="text-gray-400 text-sm mt-2">Companion guide to help organisations assess alignment with the Model Framework, with practical examples from 60+ organisations.</p>
                 </a>
 
-                <a href="https://aiverifyfoundation.sg/downloads/Proposed_MGF_Gen_AI_2024.pdf" target="_blank"
-                    class="block glass-panel p-6 rounded-xl hover:border-primary/50 transition-all group">
-                    <h4 class="font-bold text-white text-lg group-hover:text-primary transition-colors">Generative AI Governance Framework</h4>
-                    <p class="text-gray-400 text-sm mt-2">Comprehensive guidelines for LLM deployment, addressing hallucination, bias, and copyright.</p>
-                </a>
+
             </div>
 
             <!-- Toolkits -->

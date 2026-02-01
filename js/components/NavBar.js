@@ -12,6 +12,7 @@ export default {
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
                         <span class="px-3 py-2 rounded-md text-sm font-medium text-white bg-white/10">Agentic Framework 2026</span>
+                        <!-- <button @click="$emit('nav-policy')" class="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors">📋 Generate Policy</button> -->
                         <button @click="$emit('nav-resources')" class="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors">Resources</button>
                     </div>
                 </div>
