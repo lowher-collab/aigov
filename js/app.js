@@ -284,13 +284,13 @@ createApp({
                              <div class="h-64 md:h-auto bg-cover bg-center" style="background-image: url('./assets/news_banner.png');"></div>
                              <div class="p-8 flex flex-col justify-center">
                                 <span class="text-xs font-bold text-primary uppercase tracking-widest mb-2">Latest Governance News</span>
-                                <h3 class="text-2xl font-bold text-white mb-3">Singapore Launches Model AI Governance Framework for Generative AI</h3>
-                                <p class="text-gray-400 text-sm mb-4 leading-relaxed">
-                                    The new framework expands on the existing Model AI Governance Framework to address 9 dimensions of AI governance, including Incident Reporting and Content Provenance.
-                                </p>
-                                <a href="https://aiverifyfoundation.sg/resources/model-ai-governance-framework-genai" target="_blank" class="text-primary font-bold hover:text-white transition-colors flex items-center gap-1 text-sm">
-                                    Read Full Framework →
-                                </a>
+                                 <h3 class="text-2xl font-bold text-white mb-3">Singapore Launches World's First Model AI Governance Framework for Agentic AI</h3>
+                                 <p class="text-gray-400 text-sm mb-4 leading-relaxed">
+                                     The new framework, launched in January 2026, builds on the existing Model AI Governance Framework to address risks specific to autonomous AI agents.
+                                 </p>
+                                 <a href="https://www.sgpc.gov.sg/detail?url=/media_releases/imda/press_release/P-20260122-2&page=/detail&HomePage=home" target="_blank" class="text-primary font-bold hover:text-white transition-colors flex items-center gap-1 text-sm">
+                                     Read Full Framework →
+                                 </a>
                              </div>
                         </div>
                     </div>
