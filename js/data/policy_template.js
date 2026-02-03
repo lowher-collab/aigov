@@ -1,13 +1,28 @@
-// AI Policy Template - Complete Commercial Template
-// This template preserves 100% of the original content
-// Supplements will be added WITHOUT replacing any existing content
+// AI Policy Template - Complete Commercial Template v3.1
+// Enhanced for professional output with Tone Engine support
+// Removes all Agentic AI references, focuses on Generative AI
 
 export const policyTemplate = {
     metadata: {
-        version: "1.0",
-        source: "AI_Policy_Template_副本.docx",
+        version: "3.1",
+        source: "AI_Policy_Template_v3.1",
         mustPreserveAll: true,
         minimumPages: 10
+    },
+
+    disclaimer: {
+        title: "Important Notice",
+        content: [
+            "This AI Policy was generated using AI-assisted tools based on:",
+            "• Singapore Model AI Governance Framework for Generative AI (2024)",
+            "• Singapore Personal Data Protection Act (PDPA)",
+            "• Industry best practices and your organization's input",
+            "",
+            "This document is for reference only and does not constitute legal advice.",
+            "Please have your Legal/Compliance team review before formal adoption.",
+            "",
+            "Generated: [AUTO-FILLED]"
+        ]
     },
 
     sections: [
@@ -16,6 +31,33 @@ export const policyTemplate = {
             number: "1",
             title: "Purpose and Applicability",
             mustPreserve: true,
+            // Content will be replaced by Tone Engine based on AI attitude
+            toneVariants: {
+                encouraging: [
+                    "[Company] embraces Generative AI as a powerful tool for enhancing productivity, creativity, and innovation across all business functions.",
+                    "We encourage employees to explore and leverage AI capabilities to optimize workflows, accelerate decision-making, and deliver exceptional value to our stakeholders.",
+                    "This policy provides a framework for responsible AI adoption while fostering an innovation-first culture.",
+                    "This policy applies to all employees, contractors, and third-party users with access to Company AI tools and systems."
+                ],
+                cautious: [
+                    "[Company] recognizes the potential benefits of Generative AI while maintaining appropriate safeguards to protect our business, employees, and clients.",
+                    "Employees may use approved AI tools within clearly defined boundaries, following the guidelines outlined in this policy.",
+                    "This policy aims to balance innovation with risk management, ensuring AI is used responsibly and ethically.",
+                    "This policy applies to all employees, contractors, and third-party users with access to Company AI tools and systems."
+                ],
+                restrictive: [
+                    "[Company] permits limited use of Generative AI tools only for specifically approved business purposes and under strict oversight.",
+                    "All AI usage MUST comply with this policy. Unauthorized use of AI tools is strictly prohibited and may result in disciplinary action.",
+                    "This policy establishes mandatory controls to ensure AI is used safely, ethically, and in compliance with all applicable laws.",
+                    "This policy applies to all employees, contractors, and third-party users with access to Company AI tools and systems."
+                ],
+                prohibited: [
+                    "[Company] does not currently permit the general use of Generative AI tools in business operations due to identified risks.",
+                    "Exceptions may be granted on a case-by-case basis following the formal approval process outlined in this policy.",
+                    "This policy explains the rationale for these restrictions and the process for requesting exceptions.",
+                    "This policy applies to all employees, contractors, and third-party users."
+                ]
+            },
             content: [
                 "This AI Use Policy outlines principles and guardrails for responsible use of Artificial Intelligence tools at the Company, particularly Generative AI.",
                 "The purpose of this policy is to ensure ethical, transparent, and compliant use of AI technologies while mitigating associated risks.",
@@ -29,8 +71,14 @@ export const policyTemplate = {
             title: "Scope",
             mustPreserve: true,
             content: [
-                "This policy covers all AI tools used within the Company, including but not limited to GenAI, machine learning, and predictive analytics.",
-                "It encompasses the collection, processing, and utilization of data through AI systems."
+                "This policy covers all AI tools used within [Company], including but not limited to Generative AI (GenAI), machine learning models, and predictive analytics platforms.",
+                "It encompasses the collection, processing, and utilization of data through AI systems.",
+                "Specific areas covered include:",
+                "• Text generation and summarization tools (e.g., ChatGPT, Claude, Gemini)",
+                "• Code generation and assistance tools (e.g., GitHub Copilot, Cursor)",
+                "• Image and media generation tools (e.g., DALL-E, Midjourney)",
+                "• Data analysis and business intelligence AI features",
+                "• AI-powered customer service and communication tools"
             ]
         },
 
@@ -39,21 +87,47 @@ export const policyTemplate = {
             number: "3",
             title: "Approved AI Tools",
             mustPreserve: true,
+            // This section will be populated with approved tools from questionnaire
             content: [
-                "Employees may use AI tools that have been approved by the IT department and meet Company security standards.",
-                "Examples of allowed AI tools: customer support chatbots, data analysis algorithms, and predictive analytics tools.",
-                "Use of approved tools requires that they are only accessed through a company-provided account (personal accounts prohibited)."
+                "Employees may only use AI tools that have been approved by the IT department and meet [Company] security standards.",
+                "",
+                "**Currently Approved Tools:**",
+                "[APPROVED_TOOLS_LIST]",
+                "",
+                "**Approval Requirements:**",
+                "• Tools must be accessed through company-provided accounts only (personal accounts are prohibited)",
+                "• Enterprise versions with data protection features are required where available",
+                "• All tools must pass IT security assessment before approval",
+                "",
+                "**Requesting New Tool Approval:**",
+                "To request approval for a new AI tool, submit a request to the [AI Officer / DPO] with:",
+                "• Business justification and intended use cases",
+                "• Data types that will be processed",
+                "• Vendor security documentation"
             ]
         },
 
         {
             id: "section_4",
             number: "4",
-            title: "Prohibited AI Tools",
+            title: "Prohibited AI Tools and Uses",
             mustPreserve: true,
             content: [
-                "Use of any AI tools that infringe upon privacy laws or violate ethical guidelines is strictly prohibited.",
-                "Examples of prohibited AI tools: facial recognition systems without explicit consent, biased AI models, or unauthorized data scraping tools."
+                "The following AI tools and uses are strictly prohibited:",
+                "",
+                "**Prohibited Tools:**",
+                "• Any AI tool not on the approved list",
+                "• Free/consumer versions of AI tools that lack enterprise data protections",
+                "• AI tools that store or train on user data without explicit opt-out options",
+                "• Open-source AI models running on unauthorized infrastructure",
+                "",
+                "**Prohibited Uses:**",
+                "• Processing personal data without proper consent or legal basis",
+                "• Making automated decisions that significantly affect individuals without human review",
+                "• Generating content that infringes intellectual property rights",
+                "• Creating deepfakes or synthetic media of real individuals without consent",
+                "• Using AI for surveillance or employee monitoring without disclosure",
+                "• Uploading confidential business information to non-approved AI tools"
             ]
         },
 
@@ -68,17 +142,51 @@ export const policyTemplate = {
         {
             id: "section_5a",
             number: "5a",
-            title: "Guidelines",
+            title: "Usage Guidelines",
             mustPreserve: true,
+            toneVariants: {
+                encouraging: [
+                    "**Embrace AI as Your Productivity Partner:** Explore how AI can enhance your work. Experiment with different prompts and approaches to find what works best for your tasks.",
+                    "**Verify and Enhance AI Outputs:** Use AI-generated content as a starting point. Apply your expertise to refine, validate, and improve upon AI suggestions.",
+                    "**Be Aware of AI Limitations:** AI tools can produce impressive results but may occasionally generate inaccurate information. Your professional judgment remains essential.",
+                    "**Share AI-Assisted Work Transparently:** Keep your supervisor informed when AI has contributed significantly to deliverables, allowing for appropriate review.",
+                    "**Contribute to Collective Learning:** Document effective prompts and use cases. Share successful approaches with colleagues to build organizational AI capability.",
+                    "**Maintain Quality Standards:** Ensure all AI-assisted outputs meet [Company]'s quality and ethical standards before use or distribution."
+                ],
+                cautious: [
+                    "**Human Review Required:** All AI-generated content must be reviewed by a qualified human before use in any business context.",
+                    "**Understand AI Limitations:** Be aware that GenAI tools may produce 'hallucinations' — plausible-sounding but incorrect information. Verify all facts independently.",
+                    "**Data Sensitivity:** Treat every piece of information you input to an AI tool as potentially public. Do not share confidential information.",
+                    "**Supervisor Notification:** Inform your supervisor when you use AI tools to assist with significant work deliverables.",
+                    "**Quality Assurance:** Verify that AI outputs are accurate, appropriate, unbiased, and compliant with all applicable laws and policies.",
+                    "**Intellectual Property Check:** Ensure AI-generated content does not infringe on third-party intellectual property rights."
+                ],
+                restrictive: [
+                    "**MANDATORY Human Review:** All AI-generated content MUST be reviewed and approved by a qualified supervisor before any use.",
+                    "**CRITICAL WARNING - Hallucination Risk:** GenAI tools frequently produce false, misleading, or fabricated information. Direct use of unverified AI outputs is STRICTLY PROHIBITED.",
+                    "**Data Prohibition:** Do NOT input any confidential, proprietary, or personal data into AI tools under any circumstances.",
+                    "**REQUIRED Supervisor Approval:** You MUST obtain supervisor approval BEFORE using any AI tool for work purposes.",
+                    "**Documentation Requirement:** Maintain records of all AI tool usage, including prompts used and outputs generated.",
+                    "**Legal Compliance:** Ensure strict compliance with all applicable laws, regulations, and internal policies."
+                ],
+                prohibited: [
+                    "**General AI Use is Not Permitted:** AI tools may not be used for work purposes without explicit written authorization.",
+                    "**Exception Request Process:** Submit requests for AI use exceptions to the [AI Officer / DPO] with detailed justification.",
+                    "**Conditional Guidelines:** In the event of approved exceptions, all usage must follow the strict controls outlined in this policy.",
+                    "**Full Documentation Required:** Any authorized AI use must be fully documented and auditable.",
+                    "**Immediate Reporting:** Report any unauthorized AI use or suspected policy violations immediately.",
+                    "**Regular Review:** Approved exceptions will be reviewed quarterly for continued necessity and compliance."
+                ]
+            },
             content: [
                 "AI-generated content should be reviewed by a human to ensure it's appropriate for its intended purpose.",
                 "Understand that GenAI tools may be useful but are not a substitute for human judgment and creativity.",
                 "Understand that many GenAI tools are prone to \"hallucinations,\" false answers or information, or information that is subtly wrong.",
-                "Treat every bit of information you provide to a GenAI tool as if it will go viral on the Internet, attributed to you or the Company, regardless of the settings you have selected within the tool (or the assurances made by its creators).",
+                "Treat every bit of information you provide to a GenAI tool as if it will go viral on the Internet, attributed to you or the Company.",
                 "Inform your supervisor when you have used a GenAI tool to help perform a task.",
-                "Verify that any response from a GenAI tool that you intend to rely on or use is accurate, appropriate, not biased, not a violation of any other individual or entity's intellectual property or privacy, and consistent with Company policies and applicable laws."
+                "Verify that any response from a GenAI tool that you intend to rely on or use is accurate, appropriate, not biased, and consistent with Company policies and applicable laws."
             ],
-            supplementPosition: "after" // PDPA/SG additions go after existing content
+            supplementPosition: "after"
         },
 
         {
@@ -88,47 +196,43 @@ export const policyTemplate = {
             mustPreserve: true,
             content: [
                 {
-                    title: "Only input the data you need",
-                    text: "Only input data that is required for the purpose for which you are using the AI tool, and ensure the data you are using has been approved by your legal business partner for your use case."
+                    title: "Data Minimization Principle",
+                    text: "Only input data that is strictly necessary for your intended purpose. Obtain approval from your legal business partner before processing sensitive data."
                 },
                 {
-                    title: "Do not input Sensitive Personal Data",
-                    text: "This includes information such as social security numbers, financial information like credit card or bank account numbers, personal addresses, or personal health information."
+                    title: "Sensitive Personal Data Prohibition",
+                    text: "Do NOT input sensitive personal data including: NRIC/passport numbers, financial information (credit cards, bank accounts), personal addresses, health information, biometric data."
                 },
                 {
-                    title: "Do not input any Restricted Data",
-                    text: "This may include things like material nonpublic information, SOX-controlled data, Company trade secrets, or internal security controls."
+                    title: "Restricted Business Data Prohibition",
+                    text: "Do NOT input restricted business data including: material non-public information, financial reports before disclosure, trade secrets, security credentials, internal controls documentation."
                 },
                 {
-                    title: "Do not input access credentials",
-                    text: "Do not input system access credentials (for our systems or those of any third party)"
+                    title: "System Credentials Protection",
+                    text: "Never input system access credentials, API keys, passwords, or authentication tokens into any AI tool."
                 },
                 {
-                    title: "Additional restrictions",
-                    text: ""
+                    title: "Employment Decision Prohibition",
+                    text: "Do NOT use AI tools to make or influence employment decisions (hiring, promotions, performance reviews, terminations) without explicit legal and HR approval."
                 },
                 {
-                    title: "Do not use GenAI tools to make or help you make employment decisions",
-                    text: "Do not use GenAI tools to make or help you make employment decisions about applicants or employees, including recruitment, hiring, retention, promotions, transfers, performance monitoring, discipline, demotion, or terminations."
+                    title: "Confidential Information Protection",
+                    text: "Do NOT upload documents marked Confidential, Sensitive, or Proprietary. This includes client information, strategic plans, and unreleased product information."
                 },
                 {
-                    title: "Do not upload or input any confidential, proprietary, or sensitive Company information",
-                    text: "Do not upload or input any confidential, proprietary, or sensitive Company information into any GenAI tool. Examples include passwords and other credentials, protected health information, personnel material, information from documents marked Confidential, Sensitive, or Proprietary, or any other nonpublic Company information that might be of use to competitors or harmful to the Company if disclosed. This may breach your or the Company's obligations to keep certain information confidential and secure, risks widespread disclosure, and may cause the Company's rights to that information to be challenged."
+                    title: "Original Work Attribution",
+                    text: "Do not represent work substantially generated by AI as your own original work. Disclose significant AI contributions appropriately."
                 },
                 {
-                    title: "Do not represent work generated by a GenAI tool as being your own original work",
-                    text: ""
+                    title: "System Integration Controls",
+                    text: "Do NOT integrate AI tools with internal systems, APIs, or databases without written IT department approval."
                 },
                 {
-                    title: "Do not integrate any GenAI tool with internal Company software",
-                    text: "Do not integrate any GenAI tool with internal Company software without first receiving specific written permission from your supervisor and the IT Department."
-                },
-                {
-                    title: "Do not use GenAI tools other than those on the approved list",
-                    text: "Do not use GenAI tools other than those on the approved list from the IT Department. Malicious chatbots can be designed to steal or convince you to divulge information."
+                    title: "Approved Tools Only",
+                    text: "Use only AI tools from the approved list. Unapproved tools may have inadequate security or may be designed to harvest data."
                 }
             ],
-            pdpaSupplementPosition: "after", // PDPA additions go after the 9+ existing items
+            pdpaSupplementPosition: "after",
             minimumItems: 9
         },
 
@@ -139,26 +243,34 @@ export const policyTemplate = {
             mustPreserve: true,
             content: {
                 aiOnlyResponses: {
-                    title: "AI Only Responses",
-                    text: "If an AI feature will directly present a response to customers or third parties without human review or intervention, you must disclose to the customer that they are:",
+                    title: "Customer-Facing AI Responses",
+                    text: "When AI directly interfaces with customers or third parties without human review, you MUST disclose:",
                     requirements: [
-                        "Engaging solely with an AI.",
-                        "Responsible for checking it for accuracy.",
-                        "Responsible for checking the response for detectable bias."
+                        "That they are interacting with an AI system",
+                        "That they remain responsible for verifying accuracy",
+                        "How to escalate to a human representative if needed"
                     ],
-                    example: '"This response has been generated by an AI tool and has not been reviewed by a human being, you are responsible for checking for accuracy and bias."'
+                    example: '"This response was generated by AI and has not been reviewed by a human. Please verify accuracy and contact us directly for critical matters."'
                 },
                 generatingMedia: {
-                    title: "Generating Images/Voice/Video",
-                    text: "If you're using AI to generate content, please follow these guidelines.",
+                    title: "AI-Generated Images, Voice, and Video",
+                    text: "When using AI to generate visual or audio content:",
                     guidelines: [
-                        "Check output for any indication of third-party ownership, such as trademarks or watermarks, and don't use any output that contains such content.",
-                        "If you are using an AI tool to replicate someone's image, likeness, or voice - you need to get their express written permission first. Please reach out to legal counsel to coordinate permission."
+                        "Check output for third-party trademarks, watermarks, or copyrighted elements",
+                        "Obtain written consent before creating synthetic representations of real individuals",
+                        "Label AI-generated media appropriately when shared externally",
+                        "Maintain records of AI tools and prompts used for generated media"
                     ]
                 },
                 generatingCode: {
-                    title: "Generating Code",
-                    text: "If an AI feature will generate code, this requires additional review."
+                    title: "AI-Generated Code",
+                    text: "AI-generated code requires additional security and legal review:",
+                    guidelines: [
+                        "Review for security vulnerabilities before deployment",
+                        "Check for open-source license compliance",
+                        "Test thoroughly before production use",
+                        "Document AI assistance in code comments for audit trails"
+                    ]
                 }
             }
         },
@@ -166,18 +278,18 @@ export const policyTemplate = {
         {
             id: "section_7",
             number: "7",
-            title: "Transparency, explainability, and accountability",
+            title: "Transparency, Explainability, and Accountability",
             mustPreserve: true,
             content: [
-                "Employees must be transparent about the use of AI in their work, ensuring that stakeholders are aware of the technology's involvement in decision-making processes.",
-                "Employees must utilize Company's centralized system for AI governance and compliance efforts to ensure transparency of proposed and active AI activities.",
-                "Employees are responsible for the outcomes generated by AI systems and should be prepared to explain and justify those outcomes.",
-                "Employees should report any concerns or potential violations of this AI policy to the designated authority within the Company. [Link to an external reporting resouce or insert a designated reporting email.]",
-                "The Company will investigate and address reported issues promptly.",
-                "AI systems and models should provide clear explanations of their decision-making processes, especially when impacting individuals.",
-                "Ensure that AI tools are understandable to non-technical stakeholders and that their implications are communicated transparently."
+                "**Transparency Requirement:** Employees must be transparent about AI use in their work, ensuring stakeholders are aware when AI has contributed to outputs or decisions.",
+                "**Centralized Governance:** Use the Company's designated AI governance system to register and track AI initiatives and ensure compliance visibility.",
+                "**Accountability:** Employees remain personally accountable for outcomes generated with AI assistance. AI does not transfer or reduce individual responsibility.",
+                "**Reporting Obligation:** Report any concerns, potential violations, or AI-related incidents to the [AI Officer / DPO] at [CONTACT_EMAIL].",
+                "**Investigation Process:** The Company will investigate reported issues promptly and confidentially.",
+                "**Explainability:** When AI influences decisions affecting individuals, be prepared to explain the role AI played and the reasoning involved.",
+                "**Stakeholder Communication:** Ensure non-technical stakeholders can understand AI involvement and its implications."
             ],
-            sgFrameworkSupplementPosition: "after" // Singapore Framework additions go here
+            sgFrameworkSupplementPosition: "after"
         },
 
         {
@@ -190,19 +302,19 @@ export const policyTemplate = {
                     id: "section_8a",
                     number: "8a",
                     title: "AI Governance Board",
-                    content: "A multidisciplinary AI risk management team ('AI Governance Board') comprised of a diverse team of experts, including data scientists, legal and compliance professionals, and ethics specialists, will ensure that AI initiatives are developed and deployed responsibly, in compliance with relevant laws and regulations, and with ethical considerations in mind. The AI Governance Board will create and define roles and responsibilities for designated committees critical to the oversight of the Company's AI initiatives."
+                    content: "A multidisciplinary AI Governance Board comprised of representatives from Legal, Compliance, IT Security, Data Protection, and relevant business units will oversee [Company]'s AI initiatives. The Board is responsible for: approving new AI tools, reviewing high-risk AI use cases, updating this policy, and ensuring alignment with regulatory requirements."
                 },
                 {
                     id: "section_8b",
                     number: "8b",
-                    title: "Designated AI Officer",
-                    content: "A designated AI Officer will be responsible for overseeing the implementation of this policy, providing guidance and support to employees, and ensuring compliance with relevant laws and regulations."
+                    title: "Designated [AI Officer / DPO]",
+                    content: "The designated [AI Officer / DPO] is responsible for: overseeing day-to-day implementation of this policy, providing guidance and training to employees, handling AI-related inquiries and exception requests, ensuring compliance with relevant laws including the PDPA, and coordinating with the AI Governance Board. Contact: [OFFICER_NAME] at [OFFICER_EMAIL]."
                 },
                 {
                     id: "section_8c",
                     number: "8c",
-                    title: "Periodic Reviews",
-                    content: "The AI Officer will conduct periodic reviews of AI system use within the company to ensure adherence to this policy, identify any emerging risks, and recommend updates to the policy as necessary."
+                    title: "Periodic Reviews and Audits",
+                    content: "The [AI Officer / DPO] will conduct reviews of AI tool usage at least quarterly to ensure policy adherence, identify emerging risks, assess new regulatory requirements, and recommend policy updates. Annual audits may be conducted with external support to validate compliance."
                 }
             ]
         },
@@ -210,21 +322,50 @@ export const policyTemplate = {
         {
             id: "section_9",
             number: "9",
-            title: "Compliance and legal",
+            title: "Compliance and Legal",
             mustPreserve: true,
             content: [
-                "Legal and Security will monitor and investigate suspected and/or reported violations of this policy. Depending on the results of any investigations, violations may be escalated to Leadership to determine the appropriate action.",
-                "All AI tools and processes must comply with applicable laws, regulations, and industry standards.",
-                "Periodic audits of AI systems may be conducted to ensure ongoing compliance."
+                "**Investigation Authority:** Legal and Security departments are authorized to monitor, investigate, and address suspected policy violations.",
+                "**Escalation Process:** Confirmed violations will be escalated to Leadership for appropriate action determination.",
+                "**Regulatory Compliance:** All AI tools and processes must comply with applicable laws, regulations, and industry standards including PDPA, sector-specific regulations, and international data transfer requirements.",
+                "**Audit Rights:** Periodic audits of AI systems and usage may be conducted to ensure ongoing compliance.",
+                "**Record Retention:** Maintain records of AI usage decisions and approvals for audit purposes."
             ]
         },
 
         {
             id: "section_10",
             number: "10",
-            title: "Consequences of policy violation",
+            title: "Consequences of Policy Violation",
             mustPreserve: true,
-            content: "Violating this policy may result in disciplinary action, up to and including immediate termination, and could result in legal action. If you are concerned that someone has violated this policy, report this behavior to your supervisor or any member of Human Resources."
+            content: [
+                "Violations of this AI Use Policy will be addressed through a progressive disciplinary process proportionate to the severity and nature of the violation.",
+                "",
+                "**Level 1 - Minor Violations (First Occurrence):**",
+                "• Verbal warning and documented coaching",
+                "• Mandatory refresher training on AI policy",
+                "• Supervisor monitoring of AI usage for 30 days",
+                "",
+                "**Level 2 - Moderate Violations or Repeated Minor Violations:**",
+                "• Formal written warning placed in personnel file",
+                "• Temporary suspension of AI tool access (30-90 days)",
+                "• Required completion of enhanced AI ethics training",
+                "• Performance improvement plan if applicable",
+                "",
+                "**Level 3 - Serious Violations:**",
+                "• Extended suspension of AI access or system privileges",
+                "• Formal disciplinary action up to and including termination",
+                "• Notification to regulatory authorities if required by law",
+                "• Legal action to recover damages if applicable",
+                "",
+                "**Immediate Termination Offenses:**",
+                "• Intentional data breach involving personal or confidential data",
+                "• Malicious use of AI causing reputational or financial harm",
+                "• Repeated serious violations after prior warnings",
+                "",
+                "**Reporting Violations:**",
+                "If you observe or suspect a violation, report immediately to your supervisor, the [AI Officer / DPO], or through the anonymous ethics hotline."
+            ]
         },
 
         {
@@ -250,40 +391,71 @@ export const policyTemplate = {
                         category: "Regulatory Frameworks and Standards",
                         items: [
                             "Singapore Personal Data Protection Act 2012 (PDPA)",
-                            "Singapore Model AI Governance Framework (IMDA, 2026)",
-                            "Supplementary Guidance for Agentic AI Systems (January 2026)",
+                            "Singapore Model AI Governance Framework for Generative AI (IMDA, 2024)",
                             "ISO/IEC 42001:2023 - AI Management System",
                             "NIST AI Risk Management Framework"
                         ]
                     },
                     {
-                        category: "Approved AI Tools List",
+                        category: "Approved AI Tools and Resources",
                         items: [
                             "List of Company-Approved Generative AI Tools (maintained by IT Department)",
                             "AI Tool Risk Assessment Matrix",
-                            "Third-Party AI Vendor Agreements"
+                            "Third-Party AI Vendor Agreements and Security Assessments"
                         ]
                     },
                     {
-                        category: "Training and Resources",
+                        category: "Training and Support Materials",
                         items: [
                             "AI Ethics and Responsible Use Training Materials",
                             "Prompt Engineering Best Practices Guide",
                             "AI Incident Response Procedures",
-                            "FAQ: Common Questions About AI Use at the Company"
+                            "FAQ: Common Questions About AI Use at [Company]"
                         ]
                     }
                 ],
                 notes: [
                     "All referenced documents are available on the company intranet or through the Legal/Compliance department.",
                     "Employees are responsible for staying updated on changes to related policies and frameworks.",
-                    "For questions about document access or interpretation, contact the designated AI Officer or Legal department."
+                    "For questions about document access or interpretation, contact the [AI Officer / DPO]."
                 ]
             }
+        },
+
+        {
+            id: "section_12",
+            number: "12",
+            title: "Professional Review and Support",
+            mustPreserve: true,
+            content: [
+                "This policy was generated using AI-assisted tools and is designed to provide a comprehensive starting point for AI governance.",
+                "",
+                "**Recommended Next Steps:**",
+                "",
+                "1. **Legal Review:** Have your legal team review this policy to ensure alignment with your specific jurisdiction and business context.",
+                "",
+                "2. **Customization:** Adapt the policy to reflect your organization's unique culture, risk tolerance, and operational requirements.",
+                "",
+                "3. **Industry-Specific Compliance:** For industries with specific regulatory requirements ([INDUSTRY]), consult with specialists familiar with:",
+                "[INDUSTRY_REGULATIONS]",
+                "",
+                "4. **Implementation Support:** Consider professional assistance for:",
+                "   • AI governance framework design",
+                "   • Employee training program development",
+                "   • Technical controls implementation",
+                "   • Ongoing compliance monitoring",
+                "",
+                "**Contact for Professional Consultation:**",
+                "For deep customization, industry-specific adaptations, or hands-on implementation support, please contact our consulting partners.",
+                "",
+                "---",
+                "© [YEAR] [Company]. This document is generated for internal use only."
+            ]
         }
     ],
 
     // Supplement templates for PDPA and Singapore Framework
+    // Note: Agentic AI references REMOVED per requirement
     supplements: {
         pdpa: {
             targetSection: "section_5b",
@@ -309,16 +481,19 @@ export const policyTemplate = {
             position: "after",
             items: [
                 {
-                    text: "The Company aligns with the Singapore Model AI Governance Framework, specifically the supplementary guidance for Agentic AI systems (January 2026), which addresses unique risks from autonomous agents including:"
+                    text: "[Company] aligns with the Singapore Model AI Governance Framework for Generative AI, which provides guidance on responsible AI deployment including:"
                 },
                 {
-                    text: "• Agentic Loop Risks: Monitoring and controlling AI systems that can iteratively refine their own actions"
+                    text: "• Accountability: Clear assignment of responsibility for AI system outcomes"
                 },
                 {
-                    text: "• Tool Use Accountability: Clear tracking of which AI agent invoked which external tool or API"
+                    text: "• Transparency: Open communication about AI use and limitations"
                 },
                 {
-                    text: "• Explainability for Multi-Step Decisions: Providing audit trails for complex, multi-turn agent reasoning"
+                    text: "• Human Oversight: Maintaining meaningful human control over AI decisions"
+                },
+                {
+                    text: "• Fairness: Avoiding discrimination and ensuring equitable AI outcomes"
                 }
             ]
         }

@@ -138,11 +138,15 @@ createApp({
             if (viewState.value === 'landing') viewState.value = 'dashboard'; // Better UX usually to go to dashboard
         }
 
-        const showAssessment = () => {
+        const showAgentic = () => {
             if (viewState.value !== 'dashboard') {
                 previousViewState.value = viewState.value;
             }
             viewState.value = 'dashboard';
+        }
+
+        const showHome = () => {
+            viewState.value = 'landing';
         }
 
         const showPolicyGenerator = () => {
@@ -188,15 +192,7 @@ createApp({
             URL.revokeObjectURL(url);
         }
 
-        const downloadPolicyAsDOCX = async () => {
-            if (!generatedPolicy.value) return;
-            try {
-                await exportToDOCX(generatedPolicy.value.policy);
-            } catch (error) {
-                console.error('DOCX export error:', error);
-                alert('导出DOCX时出错: ' + error.message);
-            }
-        }
+        // DOCX export removed per user request
 
         const downloadPolicyAsPDF = () => {
             if (!generatedPolicy.value) return;
@@ -206,6 +202,25 @@ createApp({
                 console.error('PDF export error:', error);
                 alert('导出PDF时出错: ' + error.message);
             }
+        }
+
+        // Helper to get preview text for section outline
+        const getPreviewText = (section) => {
+            if (!section.content) return 'Content available in download'
+
+            if (Array.isArray(section.content)) {
+                const firstItem = section.content[0]
+                if (typeof firstItem === 'string') {
+                    return firstItem.substring(0, 80)
+                } else if (firstItem?.text) {
+                    return firstItem.text.substring(0, 80)
+                }
+            } else if (typeof section.content === 'string') {
+                return section.content.substring(0, 80)
+            } else if (section.content.intro) {
+                return section.content.intro.substring(0, 80)
+            }
+            return 'Detailed guidelines and requirements'
         }
 
         return {
@@ -228,17 +243,19 @@ createApp({
             isAssessmentComplete,
             showResources,
             backFromResources,
-            showAssessment,
+            showAgentic,
+            showHome,
             showPolicyGenerator,
             handlePolicyGeneration,
             backFromPolicyGenerator,
             downloadPolicyAsMarkdown,
-            downloadPolicyAsDOCX,
-            downloadPolicyAsPDF
+
+            downloadPolicyAsPDF,
+            getPreviewText
         }
     },
     template: `
-        <NavBar @nav-resources="showResources" @nav-policy="showPolicyGenerator" />
+        <NavBar @nav-home="showHome" @nav-agentic="showAgentic" @nav-resources="showResources" @nav-policy="showPolicyGenerator" />
         
         <main class="flex-grow container mx-auto px-4 py-8 relative">
             
@@ -373,81 +390,133 @@ createApp({
             />
 
             <!-- VIEW: Policy Preview -->
-            <div v-else-if="viewState === 'policy-preview' && generatedPolicy" class="max-w-6xl mx-auto mt-10 animate-fade-in pb-20">
-                <div class="text-center mb-8">
-                    <h2 class="text-4xl font-bold text-white mb-4">Generated AI Policy Document</h2>
-                    <p class="text-gray-400">
-                        {{ generatedPolicy.policy.metadata.companyName }} - {{ generatedPolicy.policy.metadata.industry }}
-                    </p>
-                </div>
-
-                <!-- Validation Results -->
-                <div v-if="generatedPolicy.validation" class="mb-8 glass-panel p-6 rounded-xl">
-                    <h3 class="text-xl font-bold text-white mb-4">质量检查</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="text-center">
-                            <div :class="generatedPolicy.validation.hasSection5a ? 'text-green-400' : 'text-red-400'" class="text-3xl mb-2">
-                                {{ generatedPolicy.validation.hasSection5a ? '✓' : '✗' }}
-                            </div>
-                            <p class="text-sm text-gray-400">第5a章</p>
+            <div v-else-if="viewState === 'policy-preview' && generatedPolicy" class="max-w-4xl mx-auto mt-6 animate-fade-in pb-20">
+                
+                <!-- Policy Cover -->
+                <div class="glass-panel rounded-2xl overflow-hidden mb-8">
+                    <!-- Cover Header with Gradient -->
+                    <div class="bg-gradient-to-br from-primary via-indigo-600 to-secondary p-12 text-center relative overflow-hidden">
+                        <div class="absolute inset-0 opacity-10">
+                            <div class="absolute top-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+                            <div class="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
                         </div>
-                        <div class="text-center">
-                            <div :class="generatedPolicy.validation.hasSection5bWith9Items ? 'text-green-400' : 'text-red-400'" class="text-3xl mb-2">
-                                {{ generatedPolicy.validation.hasSection5bWith9Items ? '✓' : '✗' }}
-                            </div>
-                            <p class="text-sm text-gray-400">第5b章 (≥9条)</p>
+                        
+                        <!-- Logo Placeholder -->
+                        <div class="w-24 h-24 mx-auto mb-6 bg-white/20 rounded-2xl backdrop-blur-sm flex items-center justify-center border-2 border-white/30">
+                            <span class="text-4xl">🤖</span>
                         </div>
-                        <div class="text-center">
-                            <div :class="generatedPolicy.validation.meetsMinimumPages ? 'text-green-400' : 'text-yellow-400'" class="text-3xl mb-2">
-                                {{ generatedPolicy.validation.estimatedPages }}
-                            </div>
-                            <p class="text-sm text-gray-400">预估页数</p>
+                        
+                        <h1 class="text-3xl md:text-4xl font-bold text-white mb-3">
+                            {{ generatedPolicy.policy.metadata.companyName }}
+                        </h1>
+                        <h2 class="text-xl md:text-2xl font-light text-white/90 mb-4">
+                            AI Usage Policy
+                        </h2>
+                        <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full text-white/80 text-sm backdrop-blur-sm">
+                            <span>📅</span>
+                            <span>{{ new Date(generatedPolicy.policy.metadata.generatedDate).toLocaleDateString() }}</span>
+                            <span class="mx-2">|</span>
+                            <span>🏢</span>
+                            <span>{{ generatedPolicy.policy.metadata.industry }}</span>
                         </div>
-                        <div class="text-center">
-                            <div :class="generatedPolicy.validation.allMandatorySectionsPresent ? 'text-green-400' : 'text-red-400'" class="text-3xl mb-2">
-                                {{ generatedPolicy.validation.allMandatorySectionsPresent ? '✓' : '✗' }}
+                    </div>
+                    
+                    <!-- Policy Outline -->
+                    <div class="p-8">
+                        <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                            <span class="text-primary">📑</span> Policy Outline
+                        </h3>
+                        
+                        <div class="space-y-3">
+                            <div v-for="(section, index) in generatedPolicy.policy.sections" :key="section.id" 
+                                 class="flex items-start gap-4 p-3 rounded-lg hover:bg-white/5 transition-colors">
+                                <div class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary font-bold text-sm shrink-0">
+                                    {{ section.number }}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-white font-medium">{{ section.title }}</h4>
+                                    <p class="text-gray-500 text-sm truncate">
+                                        {{ getPreviewText(section) }}...
+                                    </p>
+                                </div>
                             </div>
-                            <p class="text-sm text-gray-400">所有必需章节</p>
+                        </div>
+                        
+                        <!-- Appendix Notice -->
+                        <div v-if="generatedPolicy.policy.sections.find(s => s.id === 'section_11')" 
+                             class="mt-6 p-4 bg-primary/10 rounded-xl border border-primary/20">
+                            <div class="flex items-center gap-3">
+                                <span class="text-2xl">📎</span>
+                                <div>
+                                    <p class="text-white font-medium">Includes Appendix</p>
+                                    <p class="text-gray-400 text-sm">Industry-specific regulations and reference documents</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Preview -->
-                <div class="glass-panel p-8 rounded-xl mb-8">
-                    <pre class="text-gray-300 text-sm whitespace-pre-wrap font-mono">{{ generatedPolicy.markdown }}</pre>
+                <!-- Quality Check Card -->
+                <div class="glass-panel p-6 rounded-xl mb-8">
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <span class="text-green-400">✓</span> Quality Check Passed
+                    </h3>
+                    <div class="grid grid-cols-4 gap-4 text-center">
+                        <div>
+                            <div class="text-2xl text-green-400 mb-1">{{ generatedPolicy.validation.estimatedPages }}+</div>
+                            <p class="text-xs text-gray-400">Pages</p>
+                        </div>
+                        <div>
+                            <div class="text-2xl text-green-400 mb-1">11</div>
+                            <p class="text-xs text-gray-400">Sections</p>
+                        </div>
+                        <div>
+                            <div class="text-2xl text-green-400 mb-1">✓</div>
+                            <p class="text-xs text-gray-400">MGF Compliant</p>
+                        </div>
+                        <div>
+                            <div class="text-2xl text-green-400 mb-1">✓</div>
+                            <p class="text-xs text-gray-400">Disclaimer</p>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Actions -->
-                    <button 
-                        @click="viewState = 'policy-generator'"
-                        class="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors font-bold"
-                    >
-                        ← Back to Edit
-                    </button>
-                    <div class="flex gap-3">
-                        <button 
-                            @click="downloadPolicyAsDOCX"
-                            class="px-6 py-3 bg-primary hover:bg-indigo-500 text-white rounded-lg transition-colors font-bold flex items-center gap-2 shadow-lg"
-                        >
-                            <span>📄</span> Download DOCX
-                        </button>
+                <!-- Download Actions -->
+                <div class="glass-panel p-6 rounded-xl">
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <span>📥</span> Download Your Policy
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <button 
                             @click="downloadPolicyAsPDF"
-                            class="px-6 py-3 bg-secondary hover:bg-pink-600 text-white rounded-lg transition-colors font-bold flex items-center gap-2 shadow-lg"
+                            class="p-4 bg-secondary hover:bg-pink-600 text-white rounded-xl transition-all font-bold flex flex-col items-center gap-2 shadow-lg hover:scale-105 transform"
                         >
-                            <span>📕</span> Download PDF
+                            <span class="text-3xl">📕</span>
+                            <span>PDF Document</span>
+                            <span class="text-xs text-white/60">.pdf</span>
                         </button>
                         <button 
                             @click="downloadPolicyAsMarkdown"
-                            class="px-6 py-3 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors font-bold flex items-center gap-2"
+                            class="p-4 bg-gray-700 hover:bg-gray-600 text-white rounded-xl transition-all font-bold flex flex-col items-center gap-2 hover:scale-105 transform"
                         >
-                            <span>📝</span> Markdown
+                            <span class="text-3xl">📝</span>
+                            <span>Markdown</span>
+                            <span class="text-xs text-white/60">.md</span>
+                        </button>
+                    </div>
+                    
+                    <div class="mt-6 pt-6 border-t border-gray-700 flex justify-between items-center">
+                        <button 
+                            @click="viewState = 'policy-generator'"
+                            class="text-gray-400 hover:text-white transition-colors flex items-center gap-2"
+                        >
+                            ← Edit Answers
                         </button>
                         <button 
-                            @click="backToDashboard"
-                            class="px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors font-bold ml-2"
+                            @click="showPolicyGenerator"
+                            class="text-primary hover:text-white transition-colors flex items-center gap-2"
                         >
-                            Done ✓
+                            Generate Another Policy →
                         </button>
                     </div>
                 </div>

@@ -1,6 +1,6 @@
-// PolicyGenerator.js - Questionnaire-based Policy Generator
+// PolicyGenerator.js - Simplified 10-Question SME Policy Generator
 import { ref, computed, onMounted } from 'vue'
-import { policyQuestions, getQuestionsForMode, getQuestionCount } from '../data/policy_questions.js'
+import questionsData, { getAllQuestions, getDefaults } from '../data/policy_questions.js'
 import PolicyWizardStep from './PolicyWizardStep.js'
 
 export default {
@@ -10,110 +10,56 @@ export default {
     emits: ['back', 'generate'],
     setup(props, { emit }) {
         // State management
-        const currentView = ref('mode-selection') // 'mode-selection' | 'questionnaire' | 'summary'
-        const selectedMode = ref(null) // 'standard' | 'complete'
+        const currentView = ref('intro') // 'intro' | 'questionnaire' | 'summary'
         const currentQuestionIndex = ref(0)
         const answers = ref({}) // { questionId: answer }
         const questionList = ref([])
 
-        // Reset state on mount to prevent stale data
+        // Reset state on mount
         onMounted(() => {
-            currentView.value = 'mode-selection'
+            currentView.value = 'intro'
             answers.value = {}
             currentQuestionIndex.value = 0
-            questionList.value = []
-            selectedMode.value = null
+            questionList.value = getAllQuestions()
         })
 
-        // Start questionnaire with selected mode
-        const startQuestionnaire = (mode) => {
-            selectedMode.value = mode
-            const questions = getQuestionsForMode(mode)
-
-            if (!questions || questions.length === 0) {
-                console.error("Failed to load questions for mode:", mode)
-                alert("Error: Questions failed to load. Please refresh the page.")
-                return
-            }
-
-            questionList.value = questions
+        // Start questionnaire
+        const startQuestionnaire = () => {
+            questionList.value = getAllQuestions()
             currentQuestionIndex.value = 0
             answers.value = {}
             currentView.value = 'questionnaire'
         }
 
-        // Get current section and question
-        const currentSection = computed(() => {
-            if (questionList.value.length === 0) return null
-
-            let questionCount = 0
-            for (const section of questionList.value) {
-                if (currentQuestionIndex.value < questionCount + section.questions.length) {
-                    return section
-                }
-                questionCount += section.questions.length
-            }
-            return null
-        })
-
+        // Get current question
         const currentQuestion = computed(() => {
-            if (!currentSection.value) return null
-
-            let questionCount = 0
-            for (const section of questionList.value) {
-                if (section.id === currentSection.value.id) {
-                    const indexInSection = currentQuestionIndex.value - questionCount
-                    return section.questions[indexInSection]
-                }
-                questionCount += section.questions.length
-            }
-            return null
+            if (questionList.value.length === 0) return null
+            return questionList.value[currentQuestionIndex.value]
         })
 
         const progress = computed(() => ({
             current: currentQuestionIndex.value + 1,
-            total: getTotalQuestions()
+            total: questionList.value.length
         }))
-
-        // Get total questions count
-        const getTotalQuestions = () => {
-            return questionList.value.reduce((total, section) =>
-                total + section.questions.length, 0
-            )
-        }
-
-        // Check if question should be shown (conditional logic)
-        const shouldShowQuestion = (question) => {
-            if (!question.conditionalOn) return true
-
-            const condition = question.conditionalOn
-            const dependentAnswer = answers.value[condition.questionId]
-
-            if (Array.isArray(condition.value)) {
-                return condition.value.includes(dependentAnswer)
-            }
-            return dependentAnswer === condition.value
-        }
 
         // Navigate to next question
         const handleAnswer = (answer) => {
             if (currentQuestion.value) {
-                answers.value[currentQuestion.value.id] = answer
-            }
-
-            // Move to next question, skipping conditional ones
-            let nextIndex = currentQuestionIndex.value + 1
-            while (nextIndex < getTotalQuestions()) {
-                const nextQ = getQuestionByIndex(nextIndex)
-                if (shouldShowQuestion(nextQ)) {
-                    currentQuestionIndex.value = nextIndex
-                    return
+                // For group type questions, spread the object fields into individual answers
+                if (currentQuestion.value.type === 'group' && typeof answer === 'object') {
+                    Object.keys(answer).forEach(fieldId => {
+                        answers.value[fieldId] = answer[fieldId]
+                    })
+                    // Also store the whole answer under the question id
+                    answers.value[currentQuestion.value.id] = answer
+                } else {
+                    answers.value[currentQuestion.value.id] = answer
                 }
-                nextIndex++
             }
 
-            // All questions answered
-            if (nextIndex >= getTotalQuestions()) {
+            if (currentQuestionIndex.value < questionList.value.length - 1) {
+                currentQuestionIndex.value++
+            } else {
                 currentView.value = 'summary'
             }
         }
@@ -121,15 +67,7 @@ export default {
         // Navigate to previous question
         const handleBack = () => {
             if (currentQuestionIndex.value > 0) {
-                let prevIndex = currentQuestionIndex.value - 1
-                while (prevIndex >= 0) {
-                    const prevQ = getQuestionByIndex(prevIndex)
-                    if (shouldShowQuestion(prevQ)) {
-                        currentQuestionIndex.value = prevIndex
-                        return
-                    }
-                    prevIndex--
-                }
+                currentQuestionIndex.value--
             }
         }
 
@@ -138,208 +76,159 @@ export default {
             handleAnswer(null)
         }
 
-        // Get question by absolute index
-        const getQuestionByIndex = (index) => {
-            let count = 0
-            for (const section of questionList.value) {
-                if (index < count + section.questions.length) {
-                    return section.questions[index - count]
-                }
-                count += section.questions.length
-            }
-            return null
-        }
-
-        // Return to mode selection
-        const backToModeSelection = () => {
-            currentView.value = 'mode-selection'
+        // Return to intro
+        const backToIntro = () => {
+            currentView.value = 'intro'
             answers.value = {}
             currentQuestionIndex.value = 0
         }
 
         // Generate policy from answers
         const generatePolicy = () => {
-            if (Object.keys(answers.value).length === 0) {
-                alert("Please answer questions before generating policy.")
-                return
-            }
             const config = buildConfigFromAnswers()
             emit('generate', config)
         }
 
         // Build policy config from questionnaire answers
         const buildConfigFromAnswers = () => {
+            const defaults = getDefaults()
+
+            // Map answers to config, applying defaults for unanswered questions
             const config = {
-                companyInfo: {
-                    name: answers.value['1.1'] || 'Your Company',  // Fixed: was companyName
-                    industry: answers.value['1.2'] || 'Technology',
-                    size: answers.value['1.3'] || 'medium',  // Fixed: was companySize
-                    hasExistingPolicy: false
-                },
-                approvedTools: parseApprovedTools(answers.value['2.1']),
-                accessControl: answers.value['2.2'],
-                hasProhibitions: answers.value['2.3'] === 'yes',
-                prohibitedTools: answers.value['2.3.1'] || [],
-                useCases: answers.value['2.4'] || [],
-                specialUseCases: answers.value['2.5'],
-                humanReview: answers.value['3.1'],
-                hallucinationPrevention: answers.value['3.2'] || [],
-                supervisorNotification: answers.value['3.3'],
-                originalityPolicy: answers.value['3.4'],
-                biasChecking: answers.value['3.5'],
-                hrDecisions: answers.value['3.6'],
-                publicDisclosure: answers.value['4.1'],
-                mediaGeneration: answers.value['4.2'] || [],
-                codeReview: answers.value['4.3'],
-                copyrightProtection: answers.value['4.4'] || [],
-                prohibitedData: answers.value['5.1'] || [],
-                dataMinimization: answers.value['5.2'],
-                dataAnonymization: answers.value['5.3'],
-                vendorDataUsage: answers.value['5.4'],
-                hasPersonalData: answers.value['5.5'] === 'yes',
-                privacyRegulations: answers.value['5.5.1'] || [],
-                ultimateResponsibility: answers.value['6.1'],
-                hasAIofficer: answers.value['6.2'],
-                aiOfficerRole: answers.value['6.2.1'],
-                disclosureRequirements: answers.value['6.3'] || [],
-                auditRecords: answers.value['6.4'],
-                hasGovernanceBoard: answers.value['7.1'],
-                boardComposition: answers.value['7.1.1'] || [],
-                useCaseApproval: answers.value['7.2'],
-                hasTraining: answers.value['7.3'],
-                trainingContent: answers.value['7.3.1'] || [],
-                reviewFrequency: answers.value['7.4'],
-                hasRegistry: answers.value['7.5'],
-                violationConsequences: answers.value['8.1'] || [],
-                violationHandler: answers.value['8.2'],
-                reportingMechanism: answers.value['8.3'],
-                hasIndustryRegulation: answers.value['8.4'] === 'yes',
-                securityMeasures: answers.value['9.1'] || [],
-                hasIncidentReporting: answers.value['9.2'],
-                incidentTypes: answers.value['9.2.1'] || [],
-                thirdPartyAudit: answers.value['9.3'],
-                riskAssessment: answers.value['9.4'],
-                customRequirements: answers.value['10.2'],
+                companyName: answers.value['q1'] || 'Your Company',
+                industry: answers.value['q2'] || 'technology',
+                companySize: answers.value['q3'] || defaults.companySize || 'medium',
+                region: answers.value['q4'] || defaults.region,
+                policyScope: answers.value['q5'] || defaults.policyScope,
+                aiAttitude: answers.value['q6'] || 'cautious',
+                approvedTools: mapApprovedTools(answers.value['q7']) || defaults.approvedTools,
+                humanReview: answers.value['q8'] || defaults.humanReview,
+                prohibitedData: answers.value['q9'] || defaults.prohibitedData,
+                responsibility: answers.value['q10'] || defaults.responsibility,
+                // Officer information from Q11
+                officerRole: answers.value['officerRole'] || 'AI Officer / DPO',
+                officerName: answers.value['officerName'] || '[To be designated]',
+                officerEmail: answers.value['officerEmail'] || '[compliance@company.com]',
                 supplements: {
-                    pdpa: (answers.value['5.5.1'] || []).includes('pdpa'),
+                    pdpa: ['singapore', 'asia_pacific'].includes(answers.value['q4']),
                     singaporeFramework: true
-                },
-                quality: selectedMode.value === 'complete' ? 'comprehensive' : 'standard'
+                }
             }
 
             return config
         }
 
-        // Parse approved tools from multi-select
-        const parseApprovedTools = (toolsAnswer) => {
-            if (!toolsAnswer || !Array.isArray(toolsAnswer)) return []
+        // Map tool selection values to display names
+        const mapApprovedTools = (tools) => {
+            if (!tools || !Array.isArray(tools)) return null
+            const toolNames = {
+                'chatgpt': 'ChatGPT (Enterprise)',
+                'claude': 'Claude',
+                'gemini': 'Gemini',
+                'copilot': 'GitHub Copilot',
+                'midjourney': 'Midjourney / DALL-E',
+                'internal': 'Internal / Custom AI System',
+                'other': 'Other (as approved)'
+            }
+            return tools.map(t => toolNames[t] || t)
+        }
 
-            const tools = []
-            toolsAnswer.forEach(item => {
-                if (item.includes(':')) {
-                    const [type, custom] = item.split(':')
-                    tools.push(custom)
-                } else {
-                    tools.push(item)
-                }
-            })
-            return tools
+        // Get answer display value
+        const getAnswerDisplay = (questionId) => {
+            const answer = answers.value[questionId]
+            if (!answer) return 'Not specified'
+
+            if (Array.isArray(answer)) {
+                return answer.length > 0 ? answer.join(', ') : 'None selected'
+            }
+
+            // Find the question and get label for the value
+            const question = questionList.value.find(q => q.id === questionId)
+            if (question && question.options) {
+                const option = question.options.find(o => o.value === answer)
+                return option ? option.label : answer
+            }
+
+            return answer
         }
 
         return {
             currentView,
-            selectedMode,
             currentQuestionIndex,
             currentQuestion,
-            currentSection,
             progress,
             answers,
-            policyQuestions,
+            questionsData,
             startQuestionnaire,
             handleAnswer,
             handleBack,
             handleSkip,
-            backToModeSelection,
+            backToIntro,
             generatePolicy,
-            getTotalQuestions
+            getAnswerDisplay
         }
     },
     template: `
     <div>
-        <!-- Mode Selection View -->
-        <div v-if="currentView === 'mode-selection'" class="max-w-5xl mx-auto">
+        <!-- Intro View -->
+        <div v-if="currentView === 'intro'" class="max-w-4xl mx-auto fade-in">
             <div class="text-center mb-12">
-                <h1 class="text-4xl font-bold text-white mb-4">Generate AI Policy</h1>
-                <p class="text-xl text-gray-400">Choose your questionnaire mode</p>
+                <div class="inline-block p-4 rounded-full bg-primary/10 mb-6">
+                    <span class="text-5xl">📋</span>
+                </div>
+                <h1 class="text-4xl font-bold text-white mb-4">AI Policy Generator</h1>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+                    Generate a professional, Singapore-compliant AI usage policy in under 10 minutes.
+                </p>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-6">
-                <!-- Standard Mode -->
-                <div class="glass-panel rounded-2xl p-8 border-2 border-primary/30 hover:border-primary transition-all cursor-pointer group"
-                     @click="startQuestionnaire('standard')">
-                    <div class="flex items-start justify-between mb-4">
-                        <h2 class="text-2xl font-bold text-white">⭐ Standard Version</h2>
-                        <span class="px-3 py-1 bg-primary/20 text-primary text-xs font-bold rounded-full">RECOMMENDED</span>
-                    </div>
-                    
-                    <div class="h-1 w-full bg-gradient-to-r from-primary to-secondary rounded-full mb-6"></div>
-                    
-                    <p class="text-gray-300 mb-4">22 core questions | About 8-10 minutes</p>
-                    
-                    <div class="space-y-2 mb-6">
-                        <div class="flex items-center gap-2 text-sm text-gray-400">
-                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            <span>Covers all policy chapters</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-sm text-gray-400">
-                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            <span>Generates complete professional AI policy</span>
-                        </div>
-                    </div>
-                    
-                    <button class="w-full px-6 py-3 bg-primary hover:bg-indigo-500 text-white rounded-lg transition-all font-bold group-hover:scale-105 transform">
-                        Start Standard Questionnaire
-                    </button>
+            <div class="glass-panel rounded-2xl p-8 border-2 border-primary/30 hover:border-primary transition-all cursor-pointer group"
+                 @click="startQuestionnaire">
+                <div class="flex items-start justify-between mb-4">
+                    <h2 class="text-2xl font-bold text-white">⭐ SME Quick Policy</h2>
+                    <span class="px-3 py-1 bg-green-500/20 text-green-400 text-xs font-bold rounded-full">10 QUESTIONS</span>
                 </div>
+                
+                <div class="h-1 w-full bg-gradient-to-r from-primary to-secondary rounded-full mb-6"></div>
+                
+                <p class="text-gray-300 mb-4">10 core questions | About 5-8 minutes</p>
+                
+                <div class="space-y-2 mb-6">
+                    <div class="flex items-center gap-2 text-sm text-gray-400">
+                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Generates 10+ page professional AI policy</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-gray-400">
+                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Auto-applies Singapore MGF best practices</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-gray-400">
+                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Industry-specific regulatory references included</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-gray-400">
+                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Tone adapts to your company's AI attitude</span>
+                    </div>
+                </div>
+                
+                <button class="w-full px-6 py-3 bg-primary hover:bg-indigo-500 text-white rounded-lg transition-all font-bold group-hover:scale-105 transform">
+                    Start Questionnaire
+                </button>
+            </div>
 
-                <!-- Complete Mode -->
-                <div class="glass-panel rounded-2xl p-8 border-2 border-gray-700 hover:border-secondary transition-all cursor-pointer group"
-                     @click="startQuestionnaire('complete')">
-                    <h2 class="text-2xl font-bold text-white mb-4">🎯 Complete Version</h2>
-                    
-                    <div class="h-1 w-full bg-gradient-to-r from-secondary to-primary rounded-full mb-6"></div>
-                    
-                    <p class="text-gray-300 mb-4">48 detailed questions | About 18-22 minutes</p>
-                    
-                    <div class="space-y-2 mb-6">
-                        <div class="flex items-center gap-2 text-sm text-gray-400">
-                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            <span>Includes advanced security assessment</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-sm text-gray-400">
-                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            <span>Industry customization & compliance</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-sm text-gray-400">
-                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            <span>Suitable for high compliance requirements</span>
-                        </div>
-                    </div>
-                    
-                    <button class="w-full px-6 py-3 bg-secondary hover:bg-pink-600 text-white rounded-lg transition-all font-bold group-hover:scale-105 transform">
-                        Start Complete Questionnaire
-                    </button>
-                </div>
+            <div class="mt-8 text-center">
+                <p class="text-gray-500 text-sm">
+                    ✨ Defaults based on Singapore Model AI Governance Framework (GenAI Edition)
+                </p>
             </div>
         </div>
 
@@ -351,7 +240,7 @@ export default {
                 :question="currentQuestion"
                 :answer="answers[currentQuestion.id]"
                 :progress="progress"
-                :section-title="currentSection?.title || ''"
+                :section-title="currentQuestion.sectionTitle || ''"
                 @answer="handleAnswer"
                 @back="handleBack"
                 @skip="handleSkip"
@@ -359,7 +248,7 @@ export default {
         </div>
 
         <!-- Summary View -->
-        <div v-if="currentView === 'summary'" class="max-w-4xl mx-auto">
+        <div v-if="currentView === 'summary'" class="max-w-4xl mx-auto fade-in">
             <div class="glass-panel rounded-2xl p-8">
                 <div class="text-center mb-8">
                     <div class="inline-block p-4 rounded-full bg-green-500/10 mb-4">
@@ -375,27 +264,31 @@ export default {
                     <h3 class="text-lg font-bold text-white mb-4">Summary</h3>
                     <div class="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                            <span class="text-gray-400">Mode:</span>
-                            <span class="text-white font-medium ml-2">{{ selectedMode === 'standard' ? 'Standard' : 'Complete' }}</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-400">Questions Answered:</span>
-                            <span class="text-white font-medium ml-2">{{ Object.keys(answers).length }}</span>
-                        </div>
-                        <div>
                             <span class="text-gray-400">Company:</span>
-                            <span class="text-white font-medium ml-2">{{ answers['1.1'] || 'Not provided' }}</span>
+                            <span class="text-white font-medium ml-2">{{ getAnswerDisplay('q1') }}</span>
                         </div>
                         <div>
                             <span class="text-gray-400">Industry:</span>
-                            <span class="text-white font-medium ml-2">{{ answers['1.2'] || 'Not specified' }}</span>
+                            <span class="text-white font-medium ml-2">{{ getAnswerDisplay('q2') }}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400">Size:</span>
+                            <span class="text-white font-medium ml-2">{{ getAnswerDisplay('q3') }}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400">AI Attitude:</span>
+                            <span class="text-white font-medium ml-2">{{ getAnswerDisplay('q6') }}</span>
+                        </div>
+                        <div class="col-span-2">
+                            <span class="text-gray-400">Approved Tools:</span>
+                            <span class="text-white font-medium ml-2">{{ getAnswerDisplay('q7') }}</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex gap-4">
                     <button 
-                        @click="backToModeSelection"
+                        @click="backToIntro"
                         class="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors font-medium"
                     >
                         Start Over

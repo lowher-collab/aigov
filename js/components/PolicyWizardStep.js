@@ -25,7 +25,8 @@ export default {
             selectedValue: null,
             selectedValues: [],
             textValue: '',
-            customInputs: {}
+            customInputs: {},
+            groupValues: {}  // For group question type
         }
     },
     mounted() {
@@ -35,9 +36,20 @@ export default {
                 this.selectedValues = Array.isArray(this.answer) ? [...this.answer] : []
             } else if (this.question.type === 'text') {
                 this.textValue = this.answer || ''
+            } else if (this.question.type === 'group') {
+                // Initialize group values from answer object
+                this.groupValues = typeof this.answer === 'object' ? { ...this.answer } : {}
             } else {
                 this.selectedValue = this.answer
             }
+        }
+        // Initialize group values with empty strings for subfields
+        if (this.question.type === 'group' && this.question.subfields) {
+            this.question.subfields.forEach(field => {
+                if (!this.groupValues[field.id]) {
+                    this.groupValues[field.id] = ''
+                }
+            })
         }
     },
     methods: {
@@ -68,6 +80,12 @@ export default {
                         answerValue.push(`${optionValue}:${this.customInputs[optionValue]}`)
                     }
                 })
+            } else if (this.question.type === 'group') {
+                // Emit each subfield value separately so they can be mapped to config
+                answerValue = { ...this.groupValues }
+                // Also emit individual values to parent for easy mapping
+                this.$emit('answer', answerValue)
+                return
             }
 
             this.$emit('answer', answerValue)
@@ -113,6 +131,7 @@ export default {
                 {{ question.question }}
             </h2>
             <p v-if="question.description" class="text-gray-400 text-sm">{{ question.description }}</p>
+            <p v-if="question.helpText" class="text-gray-500 text-xs mt-2 italic">{{ question.helpText }}</p>
         </div>
         
         <!-- Answer Input: Text -->
@@ -124,6 +143,22 @@ export default {
                 class="w-full px-4 py-3 bg-black/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-primary placeholder-gray-500 transition-colors"
                 @keyup.enter="handleAnswer"
             >
+        </div>
+        
+        <!-- Answer Input: Group (Multiple Text Fields) -->
+        <div v-if="question.type === 'group'" class="mb-8 space-y-4">
+            <div v-for="field in question.subfields" :key="field.id" class="space-y-2">
+                <label class="block text-sm font-medium text-gray-300">
+                    {{ field.label }}
+                    <span v-if="field.required" class="text-red-400">*</span>
+                </label>
+                <input 
+                    v-model="groupValues[field.id]"
+                    type="text" 
+                    :placeholder="field.placeholder || ''"
+                    class="w-full px-4 py-3 bg-black/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-primary placeholder-gray-500 transition-colors"
+                >
+            </div>
         </div>
         
         <!-- Answer Input: Single Choice -->
@@ -260,3 +295,4 @@ export default {
     </div>
     `
 }
+
