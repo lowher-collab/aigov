@@ -58,11 +58,6 @@ export default {
                     <p class="text-gray-400 text-sm mt-2">MAS-led consortium toolkit for FEAT (Fairness, Ethics, Accountability, Transparency) assessment in financial AI.</p>
                 </a>
 
-                <a href="https://www.pdpc.gov.sg/Overview-of-PDPA/9-Data-Protection-Provisions/Anonymisation" target="_blank"
-                    class="block glass-panel p-6 rounded-xl hover:border-secondary/50 transition-all group">
-                    <h4 class="font-bold text-white text-lg group-hover:text-secondary transition-colors">PDPC Guide to Basic Anonymisation (2024)</h4>
-                    <p class="text-gray-400 text-sm mt-2">Latest Aug 2024 guide with practical techniques for anonymising datasets before AI training.</p>
-                </a>
             </div>
 
         </div>
